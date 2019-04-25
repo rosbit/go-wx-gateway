@@ -82,16 +82,16 @@
          - url: &lt;msg-proxy-pass&gt;/msg/text
          - 请求消息体: 
 
-                 ```json
-                 {
+              ```json
+              {
                     "ToUserName": "公众号的id",
                     "FromUserName": "发送消息的用户的openId",
                     "CreateTime": 1556088649,
                     "MsgType": "text",
                     "Content": "用户发送的文本内容",
                     "MsgId": "22277834746191186"
-                 }
-                 ```
+               }
+               ```
 
          - 响应
               - 如果成功，一定是回复200消息，消息体格式
@@ -106,16 +106,16 @@
      - `event`消息请求/响应举例，名称`subscribe`
          - 请求消息体: 
 
-                 ```json
-                 {
-                    "ToUserName": "公众号的id",
-                    "FromUserName": "关注公众号的用户的openId",
-                    "CreateTime": 1556088649,
-                    "MsgType": "event",
-                    "Event": "subscribe",
-                    "EventKey": "",
-                 }
-                 ```
+              ```json
+              {
+                  "ToUserName": "公众号的id",
+                  "FromUserName": "关注公众号的用户的openId",
+                  "CreateTime": 1556088649,
+                  "MsgType": "event",
+                  "Event": "subscribe",
+                  "EventKey": "",
+              }
+              ```
 
          - 响应
               - 与消息是一样的
@@ -153,7 +153,7 @@
               "h": {
                    "如果不为空": "是需要给微信浏览器设置的header信息",
                    "Set-Cookie": "可以是cookie格式的header信息"
-              }
+              },
               "r": "如果不为空，这里制定需要wx-gateway通过302跳转的URL",
               "c": "在r值不为空的情况下，这里的内容会显示在微信浏览器"
         }

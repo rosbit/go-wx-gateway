@@ -26,6 +26,7 @@
     $ make
     ```
  3. 编译成功，会得到`wx-gateway`的可执行程序。可以执行`./wx-gateway -v`显示程序信息。
+ 4. Linux的二进制版本可以直接进入[releases](https://github.com/rosbit/go-wx-gateway/releases)下载
 
 ## 运行方法
  1. 环境变量
@@ -154,7 +155,7 @@
                    "如果不为空": "是需要给微信浏览器设置的header信息",
                    "Set-Cookie": "可以是cookie格式的header信息"
               },
-              "r": "如果不为空，这里制定需要wx-gateway通过302跳转的URL",
+              "r": "如果不为空，这里指定需要wx-gateway通过302跳转的URL",
               "c": "在r值不为空的情况下，这里的内容会显示在微信浏览器"
         }
         ```

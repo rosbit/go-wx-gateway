@@ -1,0 +1,23 @@
+{
+      "listen-host": "",
+      "listen-port": 7080,
+      "services": [
+         {
+             "name": "echo_server",
+             "workerNum": 5,
+             "timeout": 0,
+             "wx-params": {
+                 "token": "your_token_at_weixin_admin",
+                 "app-id": "your_appId_at_weixin_admin",
+                 "app-secret": "your_appSecret_at_weixin_admin",
+                 "aes-key": "let_this_empty_or_null_if_plain_text_transfer"
+             },
+             "listen-endpoints": {
+                 "service-path": "/wx",
+                 "redirect-path": "/redirect"
+             },
+             "msg-proxy-pass": "http://yourhost.or.ip.here/empty_is_ok",
+             "menu-handler": "http://yourhost.or.ip/handler/path/or_empty_string"
+         }
+      ]
+}

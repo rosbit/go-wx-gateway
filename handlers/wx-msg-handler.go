@@ -95,11 +95,11 @@ func (h *WxMsgHandler) HandleViewEvent(event *wxmsg.ViewEvent) wxmsg.ReplyMsg {
 	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.Event, event)
 }
 
-func (h *WxMsgHandler) HandleScanEvent(event *wxmsg.ScanEvent) wxmsg.ReplyMsg {
+func (h *WxMsgHandler) HandleScancodePushEvent(event *wxmsg.ScancodeEvent) wxmsg.ReplyMsg {
 	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.Event, event)
 }
 
-func (h *WxMsgHandler) HandleScanWaitEvent(event *wxmsg.ScanEvent) wxmsg.ReplyMsg {
+func (h *WxMsgHandler) HandleScancodeWaitEvent(event *wxmsg.ScancodeEvent) wxmsg.ReplyMsg {
 	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.Event, event)
 }
 
@@ -108,6 +108,10 @@ func (h *WxMsgHandler) HandleSubscribeEvent(event *wxmsg.SubscribeEvent) wxmsg.R
 }
 
 func (h *WxMsgHandler) HandleUnsubscribeEvent(event *wxmsg.SubscribeEvent) wxmsg.ReplyMsg {
+	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.Event, event)
+}
+
+func (h *WxMsgHandler) HandleScanEvent(event *wxmsg.SubscribeEvent) wxmsg.ReplyMsg {
 	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.Event, event)
 }
 

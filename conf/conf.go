@@ -26,7 +26,12 @@
              "msg-proxy-pass": "http://yourhost.or.ip.here",
              "menu-handler": "http://yourhost.or.ip/handler/path"
          }
-      ]
+      ],
+	  "token-cache-dir": "/root/dir/to/save/token",
+	  "common-endpoints": {
+		  "health-check": "/health",
+		  "wx-qr": "/qr"
+	  }
    }
  *
  * Rosbit Xu
@@ -37,7 +42,6 @@ import (
 	"fmt"
 	"os"
 	"time"
-	"io/ioutil"
 	"encoding/json"
 )
 
@@ -48,25 +52,26 @@ type WxParamsConf struct {
 	AesKey    string `json:"aes-key"`
 }
 
-type EndpointConf struct {
-	ServicePath  string `json:"service-path"`
-	RedirectPath string `json:"redirect-path"`
-}
-
-type WxService struct {
-	Name         string
-	WorkerNum    int          `json:"workerNum"`
-	Timeout      int
-	WxParams     WxParamsConf `json:"wx-params"`
-	Endpoints    EndpointConf `json:"listen-endpoints"`
-	MsgProxyPass string       `json:"msg-proxy-pass"`
-	MenuHandler  string       `json:"menu-handler"`
-}
-
 type WxServiceConf struct {
 	ListenHost     string `json:"listen-host"`
 	ListenPort     int    `json:"listen-port"`
-	Services       []WxService
+	Services       []struct {
+		Name         string `json:"name"`
+		WorkerNum    int    `json:"workerNum"`
+		Timeout      int    `json:"timeout"`
+		WxParams     WxParamsConf `json:"wx-params"`
+		Endpoints    struct {
+			ServicePath  string `json:"service-path"`
+			RedirectPath string `json:"redirect-path"`
+		}  `json:"listen-endpoints"`
+		MsgProxyPass string  `json:"msg-proxy-pass"`
+		MenuHandler  string  `json:"menu-handler"`
+	} `json:"services"`
+	TokenCacheDir string `json:"token-cache-dir"`
+	CommonEndpoints struct {
+		HealthCheck string `json:"health-check"`
+		WxQr        string `json:"wx-qr"`
+	} `json:"common-endpoints"`
 }
 
 var (
@@ -99,11 +104,14 @@ func CheckGlobalConf() error {
 		return err
 	}
 
-	b, err := ioutil.ReadFile(confFile)
+	fp, err := os.Open(confFile)
 	if err != nil {
 		return err
 	}
-	if err := json.Unmarshal(b, &ServiceConf); err != nil {
+	defer fp.Close()
+
+	dec := json.NewDecoder(fp)
+	if err := dec.Decode(&ServiceConf); err != nil {
 		return err
 	}
 

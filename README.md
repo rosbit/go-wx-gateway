@@ -61,7 +61,13 @@
                  "name": "如果有其它的公众号服务，可以参考上面的信息配置",
                  "注意": "listen-endpoints中的路径 不能 相同"
              }
-		  ]
+		  ],
+		  "token-cache-dir": "缓存access的根路径，这是可选的配置",
+		  "common-endpoints": {
+			 "health-check": "/health  --这是可选的配置，用于http健康检查，该路由配置成内部可访问",
+			 "wx-qr": "/qr  --这是可选的路由配置，可以配置成内部可访问的，用于生成微信二维码链接",
+			 "wx-qr的参数说明": "s=<服务名,对应services中的name>&t=temp|forever[&sceneid=<场景id>][&e=<t为temp时的有效秒数>]"
+		  }
       }
       ```
  1. 运行wx-gateway
@@ -78,7 +84,7 @@
      - 上例中，`msg`、`event`是转发类型、`text`、`subscribe`是具体的消息或事件名称，所有名称都对应微信公众平台对应的消息
      - 所有HTTP请求都是`POST`，所有的请求/响应结果都是`JSON`，请求体的JSON是对微信公众号API消息的XML格式做了转换，具体字段仍然可以参考微信公众号API
      - `msg`消息名称有**text**、**image**、**voice**、**video**、**shortvideo**、**location**、**link**
-     - `event`事件名称有**CLICK**、**VIEW**、**subscribe**、**unsubscribe**、**location**、**LOCATION**、**pic_sysphoto**、**pic_photo_or_album**、**pic_weixin**、**scancode_waitmsg**、**scancode_push**、**MASSSENDJOBFINISH**、**TEMPLATESENDJOBFINISH**
+     - `event`事件名称有**CLICK**、**VIEW**、**SCAN**、**subscribe**、**unsubscribe**、**location**、**LOCATION**、**pic_sysphoto**、**pic_photo_or_album**、**pic_weixin**、**scancode_waitmsg**、**scancode_push**、**MASSSENDJOBFINISH**、**TEMPLATESENDJOBFINISH**
      - `msg`消息请求/响应举例，名称`text`
          - url: &lt;msg-proxy-pass&gt;/msg/text
          - 请求消息体: 

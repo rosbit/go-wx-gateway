@@ -24,7 +24,8 @@
                  "redirect-path": "/redirect"
              },
              "msg-proxy-pass": "http://yourhost.or.ip.here",
-             "menu-handler": "http://yourhost.or.ip/handler/path"
+             "menu-handler": "http://yourhost.or.ip/handler/path",
+			 "menu-redirect-url": "http://yourhost.or.ip/path/to/redirect"
          }
       ],
 	  "token-cache-dir": "/root/dir/to/save/token",
@@ -66,6 +67,7 @@ type WxServiceConf struct {
 		}  `json:"listen-endpoints"`
 		MsgProxyPass string  `json:"msg-proxy-pass"`
 		MenuHandler  string  `json:"menu-handler"`
+		MenuRedirectURL string  `json:"menu-redirect-url"`
 	} `json:"services"`
 	TokenCacheDir string `json:"token-cache-dir"`
 	CommonEndpoints struct {

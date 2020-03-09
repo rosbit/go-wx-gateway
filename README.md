@@ -30,6 +30,7 @@
 
 ## 运行方法
  1. 环境变量
+    
     - CONF_FILE: 指明配置的路径，格式见下文
  1. 配置文件格式
     - 是一个JSON
@@ -37,6 +38,8 @@
 
       ```json
       {
+      ```
+
 		  "listen-host": "",
 		  "listen-port": 7080,
 		  "services": [
@@ -55,12 +58,13 @@
 					 "redirect-path": "/redirect --这个是微信网页授权用到的，设置菜单时都用这个路径"
 				 },
 				 "msg-proxy-pass": "http://yourhost.or.ip.here    --这个地址指向消息/事件处理的服务，如果不处理可以为空",
-				 "menu-handler": "http://yourhost.or.ip/handler/path --这个地址指向菜单处理的服务，如果不处理可以为空"
+				 "menu-redirect-url": "http://yourhost.or.ip/path/to/redirect --完全转发http请求，响应将返回微信服务号，如果不为空，将忽略下面的menu-handler配置",
+				 "menu-handler": "http://yourhost.or.ip/handler/path --deprecated，只有在menu-redirect-url为空时有效，这个地址指向菜单处理的服务，如果不处理可以为空"
 			 },
-             {
-                 "name": "如果有其它的公众号服务，可以参考上面的信息配置",
-                 "注意": "listen-endpoints中的路径 不能 相同"
-             }
+	         {
+	             "name": "如果有其它的公众号服务，可以参考上面的信息配置",
+	             "注意": "listen-endpoints中的路径 不能 相同"
+	         }
 		  ],
 		  "token-cache-dir": "缓存access的根路径，这是可选的配置",
 		  "common-endpoints": {
@@ -68,8 +72,8 @@
 			 "wx-qr": "/qr  --这是可选的路由配置，可以配置成内部可访问的，用于生成微信二维码链接",
 			 "wx-qr的参数说明": "s=<服务名,对应services中的name>&t=temp|forever[&sceneid=<场景id>][&e=<t为temp时的有效秒数>]"
 		  }
-      }
-      ```
+	  }
+	  ```
  1. 运行wx-gateway
     - `$ CONF_FILE=./wx-gateway-conf.json ./wx-gateway`
 
@@ -98,7 +102,7 @@
                     "Content": "用户发送的文本内容",
                     "MsgId": "22277834746191186"
                }
-               ```
+              ```
 
          - 响应
               - 如果成功，一定是回复200消息，消息体格式
@@ -135,7 +139,8 @@
                  }
                  ```
               - "type"可以是"voice"、"video"、"image"等，"msg"则是它们对应的"mediaId"
- 2. 与`menu-handler`的通讯
+ 3. ~~与`menu-handler`的通讯~~(deprecated, 请参考第4部分)
+     
      - `menu-handler`配置的是一个URL，比如
          - `menu-handler`配置的是`http://wx.myhost.com/menu/redirect`
          - 当`wx-gateway`接收到菜单请求时，则会把消息转发给上面的URL
@@ -143,18 +148,18 @@
      - 为了让`wx-gateway`收到菜单点击事件，要按下面的格式设置菜单触发的URL:
          - `https://open.weixin.qq.com/connect/oauth2/authorize?appid=在这里填公众号的AppId&redirect_uri=http%3A//wx.myhost.com/这是redirect-path配置的值&response_type=code&scope=snsapi_base&state=这个值用于区分菜单项#wechat_redirect`
          - 只有配置正确`wx-gateway`才能收到菜单事件，并通过code获取到点击菜单的用户的openId，并转发给`menu-handler`
-     - 请求`menu-handler`的请求消息格式
-
+- 请求`menu-handler`的请求消息格式
+     
          ```json
          {
               "appId": "公众号的AppId，如果同时处理多个公众号，可以用来区分来源",
               "openId": "点击菜单的用户的openId",
               "state": "在菜单配置中的state的值，用于区分菜单项"
          }
-         ```
-
-     - 响应结果消息格式
-
+    ```
+     
+- 响应结果消息格式
+     
         ```json
         {
               "h": {
@@ -164,4 +169,42 @@
               "r": "如果不为空，这里指定需要wx-gateway通过302跳转的URL",
               "c": "在r值不为空的情况下，这里的内容会显示在微信浏览器"
         }
-        ```
+   ```
+     
+ 4. 与`menu-redirect-url`的通讯(推荐使用，替换第3部分)
+     - `menu-redirect-url`配置的是一个URL，比如
+         - `menu-redirect-url`配置的是`http://wx.myhost.com/menu/path/to/redirect`
+         - 当`wx-gateway`接收到菜单请求时，则会把消息转发给上面的URL
+         - HTTP请求的方法是`POST`，响应结果完全由转发处理服务决定，它的HTTP响应结果将反映到公众号浏览器
+     - 为了让`wx-gateway`收到菜单点击事件，要按下面的格式设置菜单触发的URL:
+         - `https://open.weixin.qq.com/connect/oauth2/authorize?appid=在这里填公众号的AppId&redirect_uri=http%3A//wx.myhost.com/这是redirect-path配置的值&response_type=code&scope=snsapi_base&state=这个值用于区分菜单项#wechat_redirect`
+         - 只有配置正确`wx-gateway`才能收到菜单事件，并通过code获取到点击菜单的用户的openId，并转发给`menu-redirect-url`
+     - 请求`menu-redirect-url`的请求消息格式
+
+         ```json
+         {
+              "appId": "公众号的AppId，如果同时处理多个公众号，可以用来区分来源",
+              "openId": "点击菜单的用户的openId",
+              "state": "在菜单配置中的state的值，用于区分菜单项",
+			  "userInfo": {
+				  "openid": ""
+				  "nickname": "",
+				  "sex": "",
+				  "province": "",
+				  "city": "",
+				  "country": "",
+				  "headimgurl": "",
+				  "privilege": ["", ""],
+				  "unionid": "",
+			  },
+			  "userInfoError": "请求userInfo时的错误信息，如果为空表示没有错误"
+         }
+         ```
+
+         所有的HTTP请求头、Cookie都会转发给`menu-redirect-url`，它可以根据需求进行处理
+
+     - 响应结果消息格式
+         - 响应结果完全有`menu-redirect-url`自主决定，包括
+         - 设置响应头、设置Cookie
+         - 或者跳转到另外的URL
+         - 响应内容会直接输出到公众号浏览器

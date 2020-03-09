@@ -17,7 +17,8 @@
                  "redirect-path": "/redirect"
              },
              "msg-proxy-pass": "http://yourhost.or.ip.here/empty_is_ok",
-             "menu-handler": "http://yourhost.or.ip/handler/path/or_empty_string"
+			 "menu-redirect-url": "http://yourhost.io.ip.here/path/to/redirect",
+             "menu-handler": "http://yourhost.or.ip/handler/path/or_empty_string, deprecated"
          }
       ]
 }

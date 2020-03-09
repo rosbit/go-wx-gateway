@@ -9,6 +9,9 @@ import (
 )
 
 /**
+ * @deprecated
+ * 为了更充分发挥菜单处理的能力，请在配置文件中加上"menu-redirect-url"，该配置将完全忽略下面的实现。
+ *
  * 根据服务号菜单state做跳转
  * @param appId   公众号的appId
  * @param openId  订阅用户的openId

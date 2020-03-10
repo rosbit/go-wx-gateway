@@ -100,7 +100,7 @@
                     "MsgType": "text",
                     "Content": "用户发送的文本内容",
                     "MsgId": "22277834746191186",
-                    "说明": "以上为必传信息，如果配置文件中dont-append-userinfo为false，则有下面的信息"
+                    "说明": "以上为必传信息，如果配置文件中dont-append-userinfo为false，则有下面的信息",
                     "userInfo": {
                         "openid": "",
                         "nickname": "",
@@ -135,8 +135,8 @@
                   "MsgType": "event",
                   "Event": "subscribe",
                   "EventKey": "qrscene_场景ID(新关注) 或 场景ID(扫码)",
-                  "Ticket": "如果是二维码扫码，是二维码的票据"
-                  "说明": "以上为必传信息，如果配置文件中dont-append-userinfo为false，则有下面的信息"
+                  "Ticket": "如果是二维码扫码，是二维码的票据",
+                  "说明": "以上为必传信息，如果配置文件中dont-append-userinfo为false，则有下面的信息",
                   "userInfo": {
                       "openid": "",
                       "nickname": "",

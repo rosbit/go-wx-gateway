@@ -10,5 +10,7 @@ github.com/rosbit/go-wx-api v0.3.2 h1:cXvsuxk+sfNItnHZggDNOy/7RbgiwSkbHEdQsUr0XA
 github.com/rosbit/go-wx-api v0.3.2/go.mod h1:+HyYx6Avz1sPXTN+JBGyW1mf/jToDkXoNZXHX7S2F8I=
 github.com/rosbit/go-wx-api v0.4.0 h1:aehGihnMu9QRkOIje+/Leke2ob9qWftdGzj9FrIH6gg=
 github.com/rosbit/go-wx-api v0.4.0/go.mod h1:+HyYx6Avz1sPXTN+JBGyW1mf/jToDkXoNZXHX7S2F8I=
+github.com/rosbit/go-wx-api v0.4.1 h1:LoEzpk0rlIuOV602kRqyWMMNwyvv8VN8J2ebOAnJGnk=
+github.com/rosbit/go-wx-api v0.4.1/go.mod h1:+HyYx6Avz1sPXTN+JBGyW1mf/jToDkXoNZXHX7S2F8I=
 github.com/urfave/negroni v1.0.0 h1:kIimOitoypq34K7TG7DUaJ9kq/N4Ofuwi1sjz0KipXc=
 github.com/urfave/negroni v1.0.0/go.mod h1:Meg73S6kFm/4PpbYdq35yYWoCZ9mS/YSx+lKnmiohz4=

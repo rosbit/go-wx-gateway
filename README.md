@@ -121,7 +121,8 @@
                   "CreateTime": 1556088649,
                   "MsgType": "event",
                   "Event": "subscribe",
-                  "EventKey": "",
+                  "EventKey": "qrscene_场景ID(新关注) 或 场景ID(扫码)",
+                  "Ticket": "如果是二维码扫码，是二维码的票据"
               }
               ```
 
@@ -179,15 +180,16 @@
               "openId": "点击菜单的用户的openId",
               "state": "在菜单配置中的state的值，用于区分菜单项",
 			  "userInfo": {
+				  "subscribe": 1,
 				  "openid": "",
 				  "nickname": "",
-				  "sex": "",
+				  "sex": 1,
+				  "language": "",
 				  "province": "",
 				  "city": "",
 				  "country": "",
 				  "headimgurl": "",
-				  "privilege": ["", ""],
-				  "unionid": "",
+				  "subscribe_time": 1386160805,
 			  },
 			  "userInfoError": "请求userInfo时的错误信息，如果为空表示没有错误"
          }

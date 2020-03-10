@@ -67,8 +67,10 @@
           "common-endpoints": {
              "health-check": "/health  --这是可选的配置，用于http健康检查，该路由配置成内部可访问",
              "wx-qr": "/qr  --这是可选的路由配置，可以配置成内部可访问的，用于生成微信二维码链接",
-             "wx-qr的参数说明": "s=<服务名,对应services中的name>&t=temp|forever[&sceneid=<场景id>][&e=<t为temp时的有效秒数>]"
-          }
+             "wx-qr的参数说明": "s=<服务名,对应services中的name>&t=temp|forever[&sceneid=<场景id>][&e=<t为temp时的有效秒数>]",
+             "wx-user": "/user --这是可选的路由配置，可以配置成内部可访问的，用于获取用户信息，参数:s=<服务名>&o=<openId>"
+          },
+          "dont-append-userinfo": "true|false, 各种消息事件是否不增加用户信息，缺省是false，表示追加"
       }
       ```
  1. 运行wx-gateway
@@ -97,7 +99,18 @@
                     "CreateTime": 1556088649,
                     "MsgType": "text",
                     "Content": "用户发送的文本内容",
-                    "MsgId": "22277834746191186"
+                    "MsgId": "22277834746191186",
+                    "说明": "以上为必传信息，如果配置文件中dont-append-userinfo为false，则有下面的信息"
+                    "userInfo": {
+                        "openid": "",
+                        "nickname": "",
+                        "headimgurl": "",
+                        "city":"", "province":"", "country":"",
+                        "sex":1,
+                        "language":"",
+                        "等等": "各种信息"
+                    },
+                    "userInfoError": "如果取userInfo发生错误，则有错误信息，否则该值为空"
                }
               ```
 
@@ -123,6 +136,17 @@
                   "Event": "subscribe",
                   "EventKey": "qrscene_场景ID(新关注) 或 场景ID(扫码)",
                   "Ticket": "如果是二维码扫码，是二维码的票据"
+                  "说明": "以上为必传信息，如果配置文件中dont-append-userinfo为false，则有下面的信息"
+                  "userInfo": {
+                      "openid": "",
+                      "nickname": "",
+                      "headimgurl": "",
+                      "city":"", "province":"", "country":"",
+                      "sex":1,
+                      "language":"",
+                      "等等": "各种信息"
+                  },
+                  "userInfoError": "如果取userInfo发生错误，则有错误信息，否则该值为空"
               }
               ```
 

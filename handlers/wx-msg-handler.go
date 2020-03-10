@@ -2,19 +2,56 @@ package gwhandlers
 
 import (
 	"github.com/rosbit/go-wx-api/msg"
+	"github.com/rosbit/go-wx-api/conf"
+	"github.com/rosbit/go-wx-api/auth"
+	"github.com/rosbit/go-wx-api/tools"
+	"encoding/json"
+	"io/ioutil"
+	"bytes"
 	"fmt"
 )
 
 type WxMsgHandler struct {
 	proxyPass string
+	wxParams *wxconf.WxParamsT
+	dontAppendUserInfo bool
 }
 
-func NewMsgHandler(proxyPass string) *WxMsgHandler {
-	return &WxMsgHandler{proxyPass}
+func NewMsgHandler(proxyPass string, wxParams *wxconf.WxParamsT, dontAppendUserInfo bool) *WxMsgHandler {
+	return &WxMsgHandler{proxyPass, wxParams, dontAppendUserInfo}
 }
 
-func jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.ReceivedMsg) wxmsg.ReplyMsg {
-	res, err := JsonCall(url, "POST", receivedMsg)
+func GetUserInfo(wxParams *wxconf.WxParamsT, openId string) (map[string]interface{}, error) {
+	accessToken, err := wxauth.NewAccessTokenWithParams(wxParams).Get()
+	if err != nil {
+		return nil, err
+	}
+	return wxtools.GetUserInfo(accessToken, openId)
+}
+
+func (h *WxMsgHandler) jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.ReceivedMsg) wxmsg.ReplyMsg {
+	var res map[string]interface{}
+	var err error
+	if h.dontAppendUserInfo {
+		res, err = JsonCall(url, "POST", receivedMsg)
+	} else {
+		res, err = GetUserInfo(h.wxParams, fromUser)
+		b := &bytes.Buffer{}               // b: <empty>
+		je := json.NewEncoder(b)
+		je.Encode(receivedMsg)             // b: {JSON}\n
+		b.Truncate(b.Len()-2)              // b: {JSON      //  "}\n" removed
+		b.WriteString(`,"userInfo":`)      // b: {JSON,"userInfo":
+		je.Encode(res)                     // b: {JSON,"userInfo":JSON\n
+		b.WriteString(`,"userInfoError":`) // b: {JSON,"userInfo":JSON\n,"userInfoError":
+		je.Encode(func()string{
+			if err == nil {
+				return ""
+			}
+			return err.Error()
+		}())                   // b: {JSON,"userInfo":JSON\n,"userInfoError":"xxx"\n
+		b.WriteByte('}')       // b: {JSON,"userInfo":JSON\n,"userInfoError":"xxx"\n}
+		res, err = JsonCall(url, "POST", ioutil.NopCloser(b))
+	}
 	if err != nil {
 		fmt.Printf("failed to JsonCall(%s): %v\n", url, err)
 		return nil
@@ -55,12 +92,12 @@ func jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.ReceivedMsg) wxmsg
 
 func (h *WxMsgHandler) jsonCallMsg(fromUser, toUser, msgType string, receivedMsg wxmsg.ReceivedMsg) wxmsg.ReplyMsg {
 	url := fmt.Sprintf("%s/msg/%s", h.proxyPass, msgType)
-	return jsonCall(fromUser, toUser, url, receivedMsg)
+	return h.jsonCall(fromUser, toUser, url, receivedMsg)
 }
 
 func (h *WxMsgHandler) jsonCallEvent(fromUser, toUser, eventType string, receivedMsg wxmsg.ReceivedMsg) wxmsg.ReplyMsg {
 	url := fmt.Sprintf("%s/event/%s", h.proxyPass, eventType)
-	return jsonCall(fromUser, toUser, url, receivedMsg)
+	return h.jsonCall(fromUser, toUser, url, receivedMsg)
 }
 
 func (h *WxMsgHandler) HandleTextMsg(msg *wxmsg.TextMsg) wxmsg.ReplyMsg {

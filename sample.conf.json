@@ -20,5 +20,12 @@
 			 "menu-redirect-url": "http://yourhost.io.ip.here/path/to/redirect",
              "menu-handler": "http://yourhost.or.ip/handler/path/or_empty_string, deprecated"
          }
-      ]
+      ],
+	  "token-cache-dir": "/path/to/cache_dir",
+	  "common-endpoints": {
+          "health-check": "/health",
+          "wx-qr": "/qr",
+		  "wx-user": "/user"
+	  },
+	  "dont-append-userinfo": false
 }

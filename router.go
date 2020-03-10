@@ -51,7 +51,7 @@ func StartWxGateway() error {
 
 		// set msg handlers and menu redirector
 		if service.MsgProxyPass != "" {
-			msgHandler := gwhandlers.NewMsgHandler(service.MsgProxyPass)
+			msgHandler := gwhandlers.NewMsgHandler(service.MsgProxyPass, wxParams, serviceConf.DontAppendUserInfo)
 			wxService.RegisterWxMsghandler(msgHandler)
 		} else {
 			wxService.RegisterWxMsghandler(wxmsg.MsgHandler)
@@ -79,6 +79,9 @@ func StartWxGateway() error {
 	}
 	if commonEndpoints.WxQr != "" {
 		router.Get(commonEndpoints.WxQr, createWxQr)
+	}
+	if commonEndpoints.WxUser != "" {
+		router.Get(commonEndpoints.WxUser, getWxUserInfo)
 	}
 	api.UseHandler(router)
 
@@ -158,6 +161,38 @@ func createWxQr(w http.ResponseWriter, r *http.Request) {
 			"ticketURL2ShowQrCode": ticketURL2ShowQrCode,
 			"urlIncluedInQrcode": urlIncluedInQrcode,
 		},
+	})
+}
+
+// GET ${commonEndpoints.WxUser}?s=<service-name-in-conf>&o=<openId>
+func getWxUserInfo(w http.ResponseWriter, r *http.Request) {
+	service := r.FormValue("s")
+	if service == "" {
+		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+		return
+	}
+
+	wxParams, ok := wxParamsCache[service]
+	if !ok {
+		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", service))
+		return
+	}
+
+	openId := r.FormValue("o")
+	if openId == "" {
+		writeError(w, http.StatusBadRequest, "o(penId) parameter expected")
+		return
+	}
+
+	userInfo, err := gwhandlers.GetUserInfo(wxParams, openId) 
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	writeJson(w, http.StatusOK, map[string]interface{}{
+		"code": http.StatusOK,
+		"msg": "OK",
+		"userInfo": userInfo,
 	})
 }
 

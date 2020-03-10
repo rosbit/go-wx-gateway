@@ -31,8 +31,10 @@
 	  "token-cache-dir": "/root/dir/to/save/token",
 	  "common-endpoints": {
 		  "health-check": "/health",
-		  "wx-qr": "/qr"
-	  }
+		  "wx-qr": "/qr",
+		  "wx-user": "/userinfo"
+	  },
+	  "dont-append-userinfo": true
    }
  *
  * Rosbit Xu
@@ -73,7 +75,9 @@ type WxServiceConf struct {
 	CommonEndpoints struct {
 		HealthCheck string `json:"health-check"`
 		WxQr        string `json:"wx-qr"`
+		WxUser      string `json:"wx-user"`
 	} `json:"common-endpoints"`
+	DontAppendUserInfo bool `json:"dont-append-userinfo"`
 }
 
 var (

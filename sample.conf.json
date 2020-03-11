@@ -17,15 +17,15 @@
                  "redirect-path": "/redirect"
              },
              "msg-proxy-pass": "http://yourhost.or.ip.here/empty_is_ok",
-			 "menu-redirect-url": "http://yourhost.io.ip.here/path/to/redirect",
-             "menu-handler": "http://yourhost.or.ip/handler/path/or_empty_string, deprecated"
+             "redirect-url": "http://yourhost.io.ip.here/path/to/redirect",
+             "redirect-userinfo-flag": "login, register or any-strings else if you want use snsapi_userinfo"
          }
       ],
-	  "token-cache-dir": "/path/to/cache_dir",
-	  "common-endpoints": {
+      "token-cache-dir": "/path/to/cache_dir",
+      "common-endpoints": {
           "health-check": "/health",
           "wx-qr": "/qr",
-		  "wx-user": "/user"
-	  },
-	  "dont-append-userinfo": false
+          "wx-user": "/user"
+      },
+      "dont-append-userinfo": false
 }

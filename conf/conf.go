@@ -24,8 +24,8 @@
                  "redirect-path": "/redirect"
              },
              "msg-proxy-pass": "http://yourhost.or.ip.here",
-             "menu-handler": "http://yourhost.or.ip/handler/path",
-			 "menu-redirect-url": "http://yourhost.or.ip/path/to/redirect"
+			 "redirect-url": "http://yourhost.or.ip/path/to/redirect",
+			 "redirect-userinfo-flag": "login, register or any-strings else if you want use snsapi_userinfo",
          }
       ],
 	  "token-cache-dir": "/root/dir/to/save/token",
@@ -67,9 +67,9 @@ type WxServiceConf struct {
 			ServicePath  string `json:"service-path"`
 			RedirectPath string `json:"redirect-path"`
 		}  `json:"listen-endpoints"`
-		MsgProxyPass string  `json:"msg-proxy-pass"`
-		MenuHandler  string  `json:"menu-handler"`
-		MenuRedirectURL string  `json:"menu-redirect-url"`
+		MsgProxyPass string `json:"msg-proxy-pass"`
+		RedirectURL string  `json:"redirect-url"`
+		RedirectUserInfoFlag string `json:"redirect-userinfo-flag"`
 	} `json:"services"`
 	TokenCacheDir string `json:"token-cache-dir"`
 	CommonEndpoints struct {

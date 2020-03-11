@@ -57,16 +57,8 @@ func StartWxGateway() error {
 			wxService.RegisterWxMsghandler(wxmsg.MsgHandler)
 		}
 
-		if len(service.MenuRedirectURL) > 0 {
-			wxService.RegisterRedirectUrl(service.MenuRedirectURL)
-		} else {
-			var menuRedirect wxauth.RedirectHandler
-			if service.MenuHandler != "" {
-				menuRedirect = gwhandlers.CreateMenuRedirector(service.MenuHandler)
-			} else {
-				menuRedirect = wxauth.ToAppIdRedirectHandler(wxauth.HandleRedirect)
-			}
-			wxService.RegisterRedictHandler(menuRedirect)
+		if len(service.RedirectURL) > 0 {
+			wxService.RegisterRedirectUrl(service.RedirectURL, service.RedirectUserInfoFlag)
 		}
 	}
 

@@ -24,17 +24,18 @@
                  "redirect-path": "/redirect"
              },
              "msg-proxy-pass": "http://yourhost.or.ip.here",
-			 "redirect-url": "http://yourhost.or.ip/path/to/redirect",
-			 "redirect-userinfo-flag": "login, register or any-strings else if you want use snsapi_userinfo",
+             "redirect-url": "http://yourhost.or.ip/path/to/redirect",
+             "redirect-userinfo-flag": "login, register or any-strings else if you want use snsapi_userinfo",
          }
       ],
-	  "token-cache-dir": "/root/dir/to/save/token",
-	  "common-endpoints": {
-		  "health-check": "/health",
-		  "wx-qr": "/qr",
-		  "wx-user": "/userinfo"
-	  },
-	  "dont-append-userinfo": true
+      "token-cache-dir": "/root/dir/to/save/token",
+      "common-endpoints": {
+          "health-check": "/health",
+          "wx-qr": "/qr",
+          "wx-user": "/userinfo",
+          "sns-auth2": "/sns-auth2"
+      },
+      "dont-append-userinfo": true
    }
  *
  * Rosbit Xu
@@ -76,6 +77,7 @@ type WxServiceConf struct {
 		HealthCheck string `json:"health-check"`
 		WxQr        string `json:"wx-qr"`
 		WxUser      string `json:"wx-user"`
+		SnsAPI      string `json:"sns-auth2"`
 	} `json:"common-endpoints"`
 	DontAppendUserInfo bool `json:"dont-append-userinfo"`
 }

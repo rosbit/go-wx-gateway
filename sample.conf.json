@@ -25,7 +25,8 @@
       "common-endpoints": {
           "health-check": "/health",
           "wx-qr": "/qr",
-          "wx-user": "/user"
+          "wx-user": "/user",
+	  "sns-auth2": "/sns-auth2"
       },
       "dont-append-userinfo": false
 }

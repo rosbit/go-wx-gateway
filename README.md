@@ -13,7 +13,10 @@
  1. 有了`go-wx-gateway`，微信公众号服务的开发就是普通的web服务开发
  1. 微信公众号服务主要处理两类数据流：
      - 消息/事件处理: 包括文本输入、图片上传、二维码扫描等等
-     - 菜单点击：`go-wx-gateway`希望接管所有的菜单点击事件，然后把用户信息、菜单state值转发给菜单处理服务
+     - 微信网页授权: 任何微信网页授权的处理都可以指向`go-wx-gateway`
+         - 比如公众号菜单可以指向一个网页授权URL，让`go-wx-gateway`统一接管，`go-wx-gateway`会把用户信息、菜单state值转发给菜单处理服务
+	 - 如果不想让`go-wx-gateway`处理网页授权，公众号也可以指向自己所需要的服务，然后把得到的code转给`go-wx-gateway`换取访问用户的
+	   openId获取完整的用户信息。该方式参考配置信息"sns-auth2"。
  1. `go-wx-gateway`和业务代码间使用HTTP传输数据，数据的格式为JSON。
 
 ## 下载、编译方法
@@ -52,10 +55,10 @@
                  },
                  "listen-endpoints": {
                      "service-path": "/wx  --开发/服务器配置/服务器地址中的路径部分",
-                     "redirect-path": "/redirect --这个是微信网页授权用到的，设置菜单时都用这个路径"
+                     "redirect-path": "/redirect --这个是微信网页授权用到的，设置菜单时都用这个路径，可选"
                  },
                  "msg-proxy-pass": "http://yourhost.or.ip.here    --这个地址指向消息/事件处理的服务，如果不处理可以为空",
-                 "redirect-url": "http://yourhost.or.ip/path/to/redirect --完全转发http请求，响应将返回微信服务号，如果不为空，将忽略下面的menu-handler配置",
+                 "redirect-url": "http://yourhost.or.ip/path/to/redirect --完全转发http请求，响应将返回微信服务号，如果不为空，将忽略下面的menu-handler配置，可选",
                  "redirect-userinfo-flag": "如果通过 snsapi_userinfo 获取参数，在redrect-url中加上特殊字符串参数，用于区分，比如 login。如果为空，使用 snsapi_base 方式获取用户参数"
              },
              {
@@ -68,7 +71,9 @@
              "health-check": "/health  --这是可选的配置，用于http健康检查，该路由配置成内部可访问",
              "wx-qr": "/qr  --这是可选的路由配置，可以配置成内部可访问的，用于生成微信二维码链接",
              "wx-qr的参数说明": "s=<服务名,对应services中的name>&t=temp|forever[&sceneid=<场景id>][&e=<t为temp时的有效秒数>]",
-             "wx-user": "/user --这是可选的路由配置，可以配置成内部可访问的，用于获取用户信息，参数:s=<服务名>&o=<openId>"
+             "wx-user": "/user --这是可选的路由配置，可以配置成内部可访问的，用于获取用户信息，参数:s=<服务名>&o=<openId>",
+             "sns-auth2": "/sns-auth2 -- 这是可选的路有配置，如果网页授权由其它服务接收，可以通过网页授权参数code获取用户信息",
+             "sns-auth2参数说明": "s=<服务名,对应services中的name>&code=<网页授权得到的code>&[scope=userinfo|base|snsapi_userinfo|snsn_api_base]"
           },
           "dont-append-userinfo": "true|false, 各种消息事件是否不增加用户信息，缺省是false，表示追加"
       }

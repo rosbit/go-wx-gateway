@@ -47,7 +47,9 @@ func StartWxGateway() error {
 		// set router
 		router.Get(endpoints.ServicePath,  wxService.Echo)
 		router.Post(endpoints.ServicePath, wxService.Request)
-		router.Get(endpoints.RedirectPath, wxService.Redirect)
+		if len(endpoints.RedirectPath) == 0 {
+			router.Get(endpoints.RedirectPath, wxService.Redirect)
+		}
 
 		// set msg handlers and menu redirector
 		if service.MsgProxyPass != "" {
@@ -58,6 +60,9 @@ func StartWxGateway() error {
 		}
 
 		if len(service.RedirectURL) > 0 {
+			if len(endpoints.RedirectPath) == 0 {
+				return fmt.Errorf("listen-endpoints/redirect-path in servie %s must be specfied if you want to use redirect-url", service.Name)
+			}
 			wxService.RegisterRedirectUrl(service.RedirectURL, service.RedirectUserInfoFlag)
 		}
 	}
@@ -74,6 +79,9 @@ func StartWxGateway() error {
 	}
 	if commonEndpoints.WxUser != "" {
 		router.Get(commonEndpoints.WxUser, getWxUserInfo)
+	}
+	if commonEndpoints.SnsAPI != "" {
+		router.Get(commonEndpoints.SnsAPI, snsAPI)
 	}
 	api.UseHandler(router)
 
@@ -176,7 +184,66 @@ func getWxUserInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userInfo, err := gwhandlers.GetUserInfo(wxParams, openId) 
+	userInfo, err := gwhandlers.GetUserInfo(wxParams, openId)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	writeJson(w, http.StatusOK, map[string]interface{}{
+		"code": http.StatusOK,
+		"msg": "OK",
+		"userInfo": userInfo,
+	})
+}
+
+// GET ${commonEndpoints.SnsAPI}?s=<service-name-in-conf>&code=<code-from-wx-server>&scope={userinfo|base}
+func snsAPI(w http.ResponseWriter, r *http.Request) {
+	service := r.FormValue("s")
+	if service == "" {
+		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+		return
+	}
+
+	wxParams, ok := wxParamsCache[service]
+	if !ok {
+		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", service))
+		return
+	}
+
+	scope := r.FormValue("scope")
+	switch scope {
+	case "userinfo","base":
+	case "", "snsapi_base":
+		scope = "base"
+	case "snsapi_userinfo":
+		scope = "userinfo"
+	default:
+		writeError(w, http.StatusBadRequest, `scope must be "useinfo", "base", "sns_userinfo" or "sns_base"`)
+		return
+	}
+
+	code := r.FormValue("code")
+	if code == "" {
+		writeError(w, http.StatusBadRequest, "code parameter expected")
+		return
+	}
+
+	wxUser := wxauth.NewWxUser(wxParams)
+	openId, err := wxUser.GetOpenId(code)
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err.Error())
+		return
+	}
+	if scope == "base" {
+		writeJson(w, http.StatusOK, map[string]interface{}{
+			"code": http.StatusOK,
+			"msg": "OK",
+			"openId": openId,
+		})
+		return
+	}
+
+	userInfo, err := wxUser.GetInfoByAccessToken()
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return

@@ -170,9 +170,9 @@
      - 处理网页授权请求。公众号的相关配置请参考微信文档。回调URL只需`wx-gateway`所在的域名
      - `redirect-url`配置的是一个URL，比如
          - `redirect-url`配置的是`http://wx.myhost.com/menu/path/to/redirect`
-         - 当`wx-gateway`接收到菜单请求时，则会把消息转发给上面的URL
+         - 当`wx-gateway`接收到网页请求时，则会把消息转发给上面的URL
          - HTTP请求的方法是`POST`，响应结果完全由转发处理服务决定，它的HTTP响应结果将反映到公众号浏览器
-     - 为了让`wx-gateway`收到菜单点击事件，要按下面的格式设置菜单触发的URL:
+     - 为了让`wx-gateway`收到菜单点击事件，要按公众号网页授权的格式写URL:
          - `https://open.weixin.qq.com/connect/oauth2/authorize?appid=在这里填公众号的AppId&redirect_uri=http%3A//wx.myhost.com/这是redirect-path配置的值&response_type=code&scope=snsapi_base&state=这个值用于区分菜单项#wechat_redirect`
          - 只有配置正确`wx-gateway`才能收到菜单事件，并通过code获取到点击菜单的用户的openId，并转发给`redirect-url`
      - 请求`redirect-url`的请求消息格式

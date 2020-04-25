@@ -47,7 +47,7 @@ func StartWxGateway() error {
 		// set router
 		router.Get(endpoints.ServicePath,  wxService.Echo)
 		router.Post(endpoints.ServicePath, wxService.Request)
-		if len(endpoints.RedirectPath) == 0 {
+		if len(endpoints.RedirectPath) > 0 {
 			router.Get(endpoints.RedirectPath, wxService.Redirect)
 		}
 

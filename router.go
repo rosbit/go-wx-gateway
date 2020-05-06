@@ -234,24 +234,22 @@ func snsAPI(w http.ResponseWriter, r *http.Request) {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
+
+	var userInfo map[string]interface{}
 	if scope == "base" {
-		writeJson(w, http.StatusOK, map[string]interface{}{
-			"code": http.StatusOK,
-			"msg": "OK",
-			"openId": openId,
-		})
-		return
+		userInfo, err = wxUser.GetInfoByAccessToken()
+	} else {
+		if err = wxUser.GetInfo(); err == nil {
+			userInfo = wxUser.UserInfo
+		}
 	}
 
-	userInfo, err := wxUser.GetInfoByAccessToken()
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
 	writeJson(w, http.StatusOK, map[string]interface{}{
 		"code": http.StatusOK,
 		"msg": "OK",
+		"openId": openId,
 		"userInfo": userInfo,
+		"error": err.Error(),
 	})
 }
 

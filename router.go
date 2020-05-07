@@ -249,7 +249,7 @@ func snsAPI(w http.ResponseWriter, r *http.Request) {
 		"msg": "OK",
 		"openId": openId,
 		"userInfo": userInfo,
-		"error": err.Error(),
+		"error": func()string{if err == nil {return ""}; return err.Error()}(),
 	})
 }
 

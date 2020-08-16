@@ -26,7 +26,8 @@
           "health-check": "/health",
           "wx-qr": "/qr",
           "wx-user": "/user",
-	  "sns-auth2": "/sns-auth2"
+          "sns-auth2": "/sns-auth2",
+          "short-url": "/short-url"
       },
       "dont-append-userinfo": false
 }

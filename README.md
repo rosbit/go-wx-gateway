@@ -72,8 +72,10 @@
              "wx-qr": "/qr  --这是可选的路由配置，可以配置成内部可访问的，用于生成微信二维码链接",
              "wx-qr的参数说明": "s=<服务名,对应services中的name>&t=temp|forever[&sceneid=<场景id>][&e=<t为temp时的有效秒数>]",
              "wx-user": "/user --这是可选的路由配置，可以配置成内部可访问的，用于获取用户信息，参数:s=<服务名>&o=<openId>",
-             "sns-auth2": "/sns-auth2 -- 这是可选的路有配置，如果网页授权由其它服务接收，可以通过网页授权参数code获取用户信息",
-             "sns-auth2参数说明": "s=<服务名,对应services中的name>&code=<网页授权得到的code>&[scope=userinfo|base|snsapi_userinfo|snsn_api_base]"
+             "sns-auth2": "/sns-auth2 -- 这是可选的路由配置，如果网页授权由其它服务接收，可以通过网页授权参数code获取用户信息",
+             "sns-auth2参数说明": "s=<服务名,对应services中的name>&code=<网页授权得到的code>&[scope=userinfo|base|snsapi_userinfo|snsn_api_base]",
+	     "short-url": "/short-url -- 这是可选的路由配置，用于把长url生成短链接",
+	     "short-url参数说明": "访问方法POST, POST body: s=<服务名,对应services中的name>&u=<url编码的长URL>"
           },
           "dont-append-userinfo": "true|false, 各种消息事件是否不增加用户信息，缺省是false，表示追加"
       }

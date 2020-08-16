@@ -33,7 +33,8 @@
           "health-check": "/health",
           "wx-qr": "/qr",
           "wx-user": "/userinfo",
-          "sns-auth2": "/sns-auth2"
+          "sns-auth2": "/sns-auth2",
+          "short-url": "/short-url"
       },
       "dont-append-userinfo": true
    }
@@ -78,6 +79,7 @@ type WxServiceConf struct {
 		WxQr        string `json:"wx-qr"`
 		WxUser      string `json:"wx-user"`
 		SnsAPI      string `json:"sns-auth2"`
+		ShortUrl    string `json:"short-url"`
 	} `json:"common-endpoints"`
 	DontAppendUserInfo bool `json:"dont-append-userinfo"`
 }

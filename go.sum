@@ -6,5 +6,7 @@ github.com/rosbit/go-wget v1.2.5 h1:XQFUwTJR8HDwYvxYH8X0cq3BkN1BOMoADc92KKp9Pcs=
 github.com/rosbit/go-wget v1.2.5/go.mod h1:8Tt92GKM/K9WI65yYkX0lwJDnRp64Vd082ojViWT6T4=
 github.com/rosbit/go-wx-api v0.4.4 h1:e7W3D+HaVWJjJQRtOCmuHpFq3Syh07UI7G+gY9FCHEo=
 github.com/rosbit/go-wx-api v0.4.4/go.mod h1:+HyYx6Avz1sPXTN+JBGyW1mf/jToDkXoNZXHX7S2F8I=
+github.com/rosbit/go-wx-api v0.4.5 h1:VuJPLq0VfliVsn6Ia5IkND+pwGygzpTmlmgSySTvgfw=
+github.com/rosbit/go-wx-api v0.4.5/go.mod h1:+HyYx6Avz1sPXTN+JBGyW1mf/jToDkXoNZXHX7S2F8I=
 github.com/urfave/negroni v1.0.0 h1:kIimOitoypq34K7TG7DUaJ9kq/N4Ofuwi1sjz0KipXc=
 github.com/urfave/negroni v1.0.0/go.mod h1:Meg73S6kFm/4PpbYdq35yYWoCZ9mS/YSx+lKnmiohz4=

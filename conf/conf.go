@@ -34,7 +34,9 @@
           "wx-qr": "/qr",
           "wx-user": "/userinfo",
           "sns-auth2": "/sns-auth2",
-          "short-url": "/short-url"
+          "short-url": "/short-url",
+          "tmpl-msg": "/tmpl-msg",
+          "sign-jsaspi": "/sign-jsapi"
       },
       "dont-append-userinfo": true
    }
@@ -80,6 +82,8 @@ type WxServiceConf struct {
 		WxUser      string `json:"wx-user"`
 		SnsAPI      string `json:"sns-auth2"`
 		ShortUrl    string `json:"short-url"`
+		TmplMsg     string `json:"tmpl-msg"`
+		SignJSAPI   string `json:"sign-jsapi"`
 	} `json:"common-endpoints"`
 	DontAppendUserInfo bool `json:"dont-append-userinfo"`
 }

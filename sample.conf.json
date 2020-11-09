@@ -27,7 +27,9 @@
           "wx-qr": "/qr",
           "wx-user": "/user",
           "sns-auth2": "/sns-auth2",
-          "short-url": "/short-url"
+          "short-url": "/short-url",
+          "tmpl-msg": "/tmpl-msg",
+          "sign-jsapi": "/sign-jsapi"
       },
       "dont-append-userinfo": false
 }

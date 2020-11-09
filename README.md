@@ -75,7 +75,12 @@
              "sns-auth2": "/sns-auth2 -- 这是可选的路由配置，如果网页授权由其它服务接收，可以通过网页授权参数code获取用户信息",
              "sns-auth2参数说明": "s=<服务名,对应services中的name>&code=<网页授权得到的code>&[scope=userinfo|base|snsapi_userinfo|snsn_api_base]",
              "short-url": "/short-url -- 这是可选的路由配置，用于把长url生成短链接",
-             "short-url参数说明": "访问方法POST, POST body: s=<服务名,对应services中的name>&u=<url编码的长URL>"
+             "short-url参数说明": "访问方法POST, POST body: s=<服务名,对应services中的name>&u=<url编码的长URL>",
+             "tmpl-msg": "/tmpl-msg -- 这是可选的路由配置，用于发送模版消息",
+             "tmpl-msg参数说明": "访问方法POST, POST body是JSON",
+             "tmpl-msg body例子": {"s":"服务名,对应services中的name","to":"用户openid","tid":"模版id","url":"可选，跳转url","mp":{"说明":"可选的小程序参数","appid":"小程序appid","pagepath":"页面路径"}, "data":{"模版数据key":"数据","数据key2":"..."}},
+             "sign-jsapi": "/sign-jsapi -- 这是可选的路由配置，用于生产jsapi签名",
+             "sign-jsapi参数说明": "访问方法POST, POST body: s=<service-name-in-conf>&u=<url-calling-jsapi-in-urlencoding>，结果会返回noncestr, timestamp, signature等结果"
           },
           "dont-append-userinfo": "true|false, 各种消息事件是否不增加用户信息，缺省是false，表示追加"
       }

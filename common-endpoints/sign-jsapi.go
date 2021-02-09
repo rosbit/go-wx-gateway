@@ -1,9 +1,7 @@
 package ce
 
 import (
-	"github.com/rosbit/go-wx-api/auth"
-	"github.com/rosbit/go-wx-api/tools"
-	"fmt"
+	"github.com/rosbit/go-wx-api/v2/tools"
 	"net/http"
 )
 
@@ -16,25 +14,13 @@ func SignJSAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wxParams, ok := wxParamsCache[service]
-	if !ok {
-		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", service))
-		return
-	}
-
 	url := r.FormValue("u")
 	if url == "" {
 		writeError(w, http.StatusBadRequest, "u(rl) parameter expected")
 		return
 	}
 
-	accessToken, err := wxauth.NewAccessTokenWithParams(wxParams).Get()
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	nonce, timestamp, signature, err := wxtools.SignJSAPI(accessToken, url)
+	nonce, timestamp, signature, err := wxtools.SignJSAPI(service, url)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return

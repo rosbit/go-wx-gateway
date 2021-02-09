@@ -1,10 +1,8 @@
 package ce
 
 import (
-	"github.com/rosbit/go-wx-api/auth"
-	"github.com/rosbit/go-wx-api/tools"
+	"github.com/rosbit/go-wx-api/v2/tools"
 	"strconv"
-	"fmt"
 	"net/http"
 )
 
@@ -13,12 +11,6 @@ func CreateWxQr(w http.ResponseWriter, r *http.Request) {
 	service := r.FormValue("s")
 	if service == "" {
 		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
-		return
-	}
-
-	wxParams, ok := wxParamsCache[service]
-	if !ok {
-		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", service))
 		return
 	}
 
@@ -39,13 +31,8 @@ func CreateWxQr(w http.ResponseWriter, r *http.Request) {
 		sceneid = "0"
 	}
 
-	accessToken, err := wxauth.NewAccessTokenWithParams(wxParams).Get()
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-
 	var ticketURL2ShowQrCode, urlIncluedInQrcode string
+	var err error
 	switch qrType {
 	case "temp":
 		expireSecs := 30
@@ -56,9 +43,9 @@ func CreateWxQr(w http.ResponseWriter, r *http.Request) {
 				expireSecs = 30
 			}
 		}
-		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateTempQrStrScene(accessToken, sceneid, expireSecs)
+		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateTempQrStrScene(service, sceneid, expireSecs)
 	case "forever":
-		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateQrStrScene(accessToken, sceneid)
+		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateQrStrScene(service, sceneid)
 	}
 
 	if err != nil {

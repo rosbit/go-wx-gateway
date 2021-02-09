@@ -5,17 +5,17 @@
 package main
 
 import (
+	"github.com/rosbit/go-wx-api/v2/msg"
+	"github.com/rosbit/go-wx-api/v2/log"
+	"github.com/rosbit/go-wx-api/v2"
 	"github.com/urfave/negroni"
-	"github.com/gernest/alien"
-	"net/http"
+	"github.com/go-zoo/bone"
+	"wx-gateway/common-endpoints"
+	"wx-gateway/handlers"
+	"wx-gateway/conf"
 	"fmt"
 	"os"
-	"github.com/rosbit/go-wx-api"
-	"github.com/rosbit/go-wx-api/conf"
-	"github.com/rosbit/go-wx-api/msg"
-	"wx-gateway/common-endpoints"
-	"wx-gateway/conf"
-	"wx-gateway/handlers"
+	"net/http"
 )
 
 func StartWxGateway() error {
@@ -23,78 +23,72 @@ func StartWxGateway() error {
 	api.Use(negroni.NewRecovery())
 	api.Use(negroni.NewLogger())
 
-	router := alien.New()
+	router := bone.New()
 	serviceConf := gwconf.ServiceConf
+
+	if len(serviceConf.TokenCacheDir) > 0  {
+		wxapi.InitWx(serviceConf.TokenCacheDir)
+	}
+	wxlog.SetLogger(os.Stderr)
+
 	for _, service := range serviceConf.Services {
-		paramConf := service.WxParams
-		wxParams, err := wxconf.NewWxParams(paramConf.Token, paramConf.AppId, paramConf.AppSecret, paramConf.AesKey)
-		if err != nil {
-			return fmt.Errorf("failed to init servie %s: %v", service.Name, err)
+		paramConf := &service.WxParams
+		if err := wxapi.SetWxParams(service.Name, paramConf.Token, paramConf.AppId, paramConf.AppSecret, paramConf.AesKey); err != nil {
+			return err
 		}
-		ce.CacheWxParams(service.Name, wxParams)
-		// wxParamsCache[service.Name] = wxParams
 
-		// init wx API
-		wxService := wxapi.InitWxAPIWithParams(wxParams, service.WorkerNum, os.Stdout)
-		endpoints := service.Endpoints
-
+		endpoints := &service.Endpoints
 		// add uri signature checker
 		signatureChecker := wxapi.NewWxSignatureChecker(paramConf.Token, service.Timeout, []string{endpoints.ServicePath})
 		api.Use(negroni.HandlerFunc(signatureChecker))
 
-		// set router
-		router.Get(endpoints.ServicePath,  wxService.Echo)
-		router.Post(endpoints.ServicePath, wxService.Request)
-		if len(endpoints.RedirectPath) > 0 {
-			router.Get(endpoints.RedirectPath, wxService.Redirect)
-		}
+		// set echo handler
+		router.Get(endpoints.ServicePath,  wxapi.CreateEcho(paramConf.Token))
 
-		// set msg handlers and menu redirector
+		// set msg handlers
+		var msgHandler wxmsg.WxMsgHandler
 		if len(service.MsgProxyPass) > 0 {
-			msgHandler := gwhandlers.NewMsgHandler(service.MsgProxyPass, wxParams, serviceConf.DontAppendUserInfo)
-			wxService.RegisterWxMsghandler(msgHandler)
+			msgHandler = gwhandlers.NewMsgHandler(service.Name, service.MsgProxyPass, serviceConf.DontAppendUserInfo)
 		} else {
-			wxService.RegisterWxMsghandler(wxmsg.MsgHandler)
+			msgHandler = wxmsg.MsgHandler
 		}
+		router.Post(endpoints.ServicePath, wxapi.CreateMsgHandler(service.Name, service.WorkerNum, msgHandler))
 
+		// set oauth2 rediretor
 		if len(service.RedirectURL) > 0 {
 			if len(endpoints.RedirectPath) == 0 {
 				return fmt.Errorf("listen-endpoints/redirect-path in servie %s must be specfied if you want to use redirect-url", service.Name)
 			}
-			wxService.RegisterRedirectUrl(service.RedirectURL, service.RedirectUserInfoFlag)
+			router.Get(endpoints.RedirectPath, wxapi.CreateOAuth2Redirector(service.Name, service.WorkerNum, service.RedirectURL, service.RedirectUserInfoFlag))
 		}
 	}
 
 	commonEndpoints := &serviceConf.CommonEndpoints
 	if len(commonEndpoints.HealthCheck) > 0 {
-		router.Get(commonEndpoints.HealthCheck, func(w http.ResponseWriter, r *http.Request) {
+		router.Get(commonEndpoints.HealthCheck, http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			w.Header().Set("Content-Type", "text/plain")
 			fmt.Fprintf(w, "OK\n")
-		})
+		}))
 	}
 	if len(commonEndpoints.WxQr) > 0 {
-		router.Get(commonEndpoints.WxQr, ce.CreateWxQr)
+		router.Get(commonEndpoints.WxQr, http.HandlerFunc(ce.CreateWxQr))
 	}
 	if len(commonEndpoints.WxUser) > 0 {
-		router.Get(commonEndpoints.WxUser, ce.GetWxUserInfo)
+		router.Get(commonEndpoints.WxUser, http.HandlerFunc(ce.GetWxUserInfo))
 	}
 	if len(commonEndpoints.SnsAPI) > 0 {
-		router.Get(commonEndpoints.SnsAPI, ce.SnsAPI)
+		router.Get(commonEndpoints.SnsAPI, http.HandlerFunc(ce.SnsAPI))
 	}
 	if len(commonEndpoints.ShortUrl) > 0 {
-		router.Post(commonEndpoints.ShortUrl, ce.CreateShorturl)
+		router.Post(commonEndpoints.ShortUrl, http.HandlerFunc(ce.CreateShorturl))
 	}
 	if len(commonEndpoints.TmplMsg) > 0 {
-		router.Post(commonEndpoints.TmplMsg, ce.SendTmplMsg)
+		router.Post(commonEndpoints.TmplMsg, http.HandlerFunc(ce.SendTmplMsg))
 	}
 	if len(commonEndpoints.SignJSAPI) > 0  {
-		router.Post(commonEndpoints.SignJSAPI, ce.SignJSAPI)
+		router.Post(commonEndpoints.SignJSAPI, http.HandlerFunc(ce.SignJSAPI))
 	}
 	api.UseHandler(router)
-
-	if len(serviceConf.TokenCacheDir) > 0  {
-		wxconf.TokenStorePath = serviceConf.TokenCacheDir
-	}
 
 	listenParam := fmt.Sprintf("%s:%d", serviceConf.ListenHost, serviceConf.ListenPort)
 	fmt.Printf("%v\n", http.ListenAndServe(listenParam, api))

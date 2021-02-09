@@ -1,22 +1,17 @@
 package ce
 
 import (
-	"github.com/rosbit/go-wx-api/auth"
+	"github.com/rosbit/go-wx-api/v2/auth"
 	"fmt"
 	"net/http"
 )
 
 // GET ${commonEndpoints.SnsAPI}?s=<service-name-in-conf>&code=<code-from-wx-server>&scope={userinfo|base}
 func SnsAPI(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("SnsAPI called\n")
 	service := r.FormValue("s")
 	if service == "" {
 		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
-		return
-	}
-
-	wxParams, ok := wxParamsCache[service]
-	if !ok {
-		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", service))
 		return
 	}
 
@@ -38,7 +33,7 @@ func SnsAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wxUser := wxauth.NewWxUser(wxParams)
+	wxUser := wxauth.NewWxUser(service)
 	openId, err := wxUser.GetOpenId(code)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())

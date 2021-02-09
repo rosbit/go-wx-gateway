@@ -6,9 +6,9 @@
 package main
 
 import (
+	"wx-gateway/conf"
 	"os"
 	"fmt"
-	"wx-gateway/conf"
 )
 
 // variables set via go build -ldflags

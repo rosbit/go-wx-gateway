@@ -1,9 +1,7 @@
 package ce
 
 import (
-	"github.com/rosbit/go-wx-api/auth"
-	"github.com/rosbit/go-wx-api/tools"
-	"fmt"
+	"github.com/rosbit/go-wx-api/v2/tools"
 	"net/http"
 )
 
@@ -44,11 +42,6 @@ func SendTmplMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wxParams, ok := wxParamsCache[params.Service]
-	if !ok {
-		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", params.Service))
-		return
-	}
 	if params.ToUserId == "" {
 		writeError(w, http.StatusBadRequest, "to(user id) parameter expected")
 		return
@@ -62,12 +55,7 @@ func SendTmplMsg(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	accessToken, err := wxauth.NewAccessTokenWithParams(wxParams).Get()
-	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
-		return
-	}
-	res, err := wxtools.SendTemplateMessage(accessToken, params.ToUserId, params.TmplId, params.Data, params.Url, params.MiniProg.AppId, params.MiniProg.PagePath)
+	res, err := wxtools.SendTemplateMessage(params.Service, params.ToUserId, params.TmplId, params.Data, params.Url, params.MiniProg.AppId, params.MiniProg.PagePath)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return

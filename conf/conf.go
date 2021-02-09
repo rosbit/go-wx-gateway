@@ -36,7 +36,7 @@
           "sns-auth2": "/sns-auth2",
           "short-url": "/short-url",
           "tmpl-msg": "/tmpl-msg",
-          "sign-jsaspi": "/sign-jsapi"
+          "sign-jsapi": "/sign-jsapi"
       },
       "dont-append-userinfo": true
    }

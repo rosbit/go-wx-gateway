@@ -1,10 +1,8 @@
 package gwhandlers
 
 import (
-	"github.com/rosbit/go-wx-api/msg"
-	"github.com/rosbit/go-wx-api/conf"
-	"github.com/rosbit/go-wx-api/auth"
-	"github.com/rosbit/go-wx-api/tools"
+	"github.com/rosbit/go-wx-api/v2/msg"
+	"github.com/rosbit/go-wx-api/v2/auth"
 	"encoding/json"
 	"io/ioutil"
 	"bytes"
@@ -12,21 +10,13 @@ import (
 )
 
 type WxMsgHandler struct {
+	service string
 	proxyPass string
-	wxParams *wxconf.WxParamsT
 	dontAppendUserInfo bool
 }
 
-func NewMsgHandler(proxyPass string, wxParams *wxconf.WxParamsT, dontAppendUserInfo bool) *WxMsgHandler {
-	return &WxMsgHandler{proxyPass, wxParams, dontAppendUserInfo}
-}
-
-func GetUserInfo(wxParams *wxconf.WxParamsT, openId string) (map[string]interface{}, error) {
-	accessToken, err := wxauth.NewAccessTokenWithParams(wxParams).Get()
-	if err != nil {
-		return nil, err
-	}
-	return wxtools.GetUserInfo(accessToken, openId)
+func NewMsgHandler(service, proxyPass string, dontAppendUserInfo bool) *WxMsgHandler {
+	return &WxMsgHandler{service, proxyPass, dontAppendUserInfo}
 }
 
 func (h *WxMsgHandler) jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.ReceivedMsg) wxmsg.ReplyMsg {
@@ -35,7 +25,7 @@ func (h *WxMsgHandler) jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.
 	if h.dontAppendUserInfo {
 		res, err = JsonCall(url, "POST", receivedMsg)
 	} else {
-		res, err = GetUserInfo(h.wxParams, fromUser)
+		res, err = wxauth.GetUserInfo(h.service, fromUser)
 		b := &bytes.Buffer{}               // b: <empty>
 		je := json.NewEncoder(b)
 		je.Encode(receivedMsg)             // b: {JSON}\n

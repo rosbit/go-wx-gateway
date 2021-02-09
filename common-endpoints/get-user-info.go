@@ -1,8 +1,7 @@
 package ce
 
 import (
-	"wx-gateway/handlers"
-	"fmt"
+	"github.com/rosbit/go-wx-api/v2/tools"
 	"net/http"
 )
 
@@ -14,19 +13,13 @@ func GetWxUserInfo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wxParams, ok := wxParamsCache[service]
-	if !ok {
-		writeError(w, http.StatusBadRequest, fmt.Sprintf("unknown service name %s", service))
-		return
-	}
-
 	openId := r.FormValue("o")
 	if openId == "" {
 		writeError(w, http.StatusBadRequest, "o(penId) parameter expected")
 		return
 	}
 
-	userInfo, err := gwhandlers.GetUserInfo(wxParams, openId)
+	userInfo, err := wxtools.GetUserInfo(service, openId)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())
 		return

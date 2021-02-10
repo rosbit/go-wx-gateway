@@ -1,7 +1,7 @@
 package ce
 
 import (
-	"github.com/rosbit/go-wx-api/v2/auth"
+	"github.com/rosbit/go-wx-api/v2/oauth2"
 	"fmt"
 	"net/http"
 )
@@ -33,7 +33,7 @@ func SnsAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	wxUser := wxauth.NewWxUser(service)
+	wxUser := wxoauth2.NewWxUser(service)
 	openId, err := wxUser.GetOpenId(code)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, err.Error())

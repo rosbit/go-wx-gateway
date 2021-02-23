@@ -25,13 +25,14 @@ func (h *WxMsgHandler) jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.
 	if h.dontAppendUserInfo {
 		res, err = JsonCall(url, "POST", receivedMsg)
 	} else {
-		res, err = wxauth.GetUserInfo(h.service, fromUser)
+		var ui *wxauth.WxUserInfo
+		ui, err = wxauth.GetUserInfo(h.service, fromUser)
 		b := &bytes.Buffer{}               // b: <empty>
 		je := json.NewEncoder(b)
 		je.Encode(receivedMsg)             // b: {JSON}\n
 		b.Truncate(b.Len()-2)              // b: {JSON      //  "}\n" removed
 		b.WriteString(`,"userInfo":`)      // b: {JSON,"userInfo":
-		je.Encode(res)                     // b: {JSON,"userInfo":JSON\n
+		je.Encode(ui)                      // b: {JSON,"userInfo":JSON\n
 		b.WriteString(`,"userInfoError":`) // b: {JSON,"userInfo":JSON\n,"userInfoError":
 		je.Encode(func()string{
 			if err == nil {

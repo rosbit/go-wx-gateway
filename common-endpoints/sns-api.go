@@ -2,6 +2,7 @@ package ce
 
 import (
 	"github.com/rosbit/go-wx-api/v2/oauth2"
+	"github.com/rosbit/go-wx-api/v2/auth"
 	"fmt"
 	"net/http"
 )
@@ -40,7 +41,7 @@ func SnsAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var userInfo map[string]interface{}
+	var userInfo *wxauth.WxUserInfo
 	if scope == "base" {
 		userInfo, err = wxUser.GetInfoByAccessToken()
 	} else {

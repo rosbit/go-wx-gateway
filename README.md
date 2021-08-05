@@ -58,7 +58,7 @@
                      "redirect-path": "/redirect --这个是微信网页授权用到的，设置菜单时都用这个路径，可选"
                  },
                  "msg-proxy-pass": "http://yourhost.or.ip.here    --这个地址指向消息/事件处理的服务，如果不处理可以为空",
-                 "redirect-url": "http://yourhost.or.ip/path/to/redirect --完全转发http请求，响应将返回微信服务号，如果不为空，将忽略下面的menu-handler配置，可选",
+                 "redirect-url": "http://yourhost.or.ip/path/to/redirect --完全转发http请求，响应将返回微信服务号，可选",
                  "redirect-userinfo-flag": "如果通过 snsapi_userinfo 获取参数，在redrect-url中加上特殊字符串参数，用于区分，比如 login。如果为空，使用 snsapi_base 方式获取用户参数"
              },
              {
@@ -74,7 +74,7 @@
              "wx-user": "/user --这是可选的路由配置，可以配置成内部可访问的，用于获取用户信息，参数:s=<服务名>&o=<openId>",
              "sns-auth2": "/sns-auth2 -- 这是可选的路由配置，如果网页授权由其它服务接收，可以通过网页授权参数code获取用户信息",
              "sns-auth2参数说明": "s=<服务名,对应services中的name>&code=<网页授权得到的code>&[scope=userinfo|base|snsapi_userinfo|snsn_api_base]",
-             "short-url": "/short-url -- 这是可选的路由配置，用于把长url生成短链接",
+             "short-url": "/short-url -- 这是可选的路由配置，用于把长url生成短链接。【注】微信已经停止该服务",
              "short-url参数说明": "访问方法POST, POST body: s=<服务名,对应services中的name>&u=<url编码的长URL>",
              "tmpl-msg": "/tmpl-msg -- 这是可选的路由配置，用于发送模版消息",
              "tmpl-msg参数说明": "访问方法POST, POST body是JSON",
@@ -89,7 +89,7 @@
     - `$ CONF_FILE=./wx-gateway-conf.json ./wx-gateway`
 
 ## 与业务代码间的通讯
- 1. 如果没有配置`msg-proxy-pass`、`menu-handler`，则`wx-gateway`可以作为工具**启用**`开发/服务器配置`，并可以对关注公众号
+ 1. 如果没有配置`msg-proxy-pass`，则`wx-gateway`可以作为工具**启用**`开发/服务器配置`，并可以对关注公众号
     的用户通过文本框实现回声应答，是公众号开发必备的调试工具。
  2. 与`msg-proxy-pass`的通讯
      - `msg-porxy-pass`配置的是一个URL地址前缀，`wx-gateway`会把消息、事件类型加到后面合成完整的URL。比如:

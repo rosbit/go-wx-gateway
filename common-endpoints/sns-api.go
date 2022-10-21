@@ -3,46 +3,42 @@ package ce
 import (
 	"github.com/rosbit/go-wx-api/v2/oauth2"
 	"github.com/rosbit/go-wx-api/v2/auth"
-	"fmt"
+	"github.com/rosbit/mgin"
 	"net/http"
 )
 
 // GET ${commonEndpoints.SnsAPI}?s=<service-name-in-conf>&code=<code-from-wx-server>&scope={userinfo|base}
-func SnsAPI(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("SnsAPI called\n")
-	service := r.FormValue("s")
-	if service == "" {
-		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+func SnsAPI(c *mgin.Context) {
+	var params struct {
+		Service string `query:"s"`
+		Code    string `query:"code"`
+		Scope   string `query:"scope" optional:"true"`
+	}
+	if code, err := c.ReadParams(&params); err != nil {
+		c.Error(code, err.Error())
 		return
 	}
 
-	scope := r.FormValue("scope")
-	switch scope {
+	switch params.Scope {
 	case "userinfo","base":
 	case "", "snsapi_base":
-		scope = "base"
+		params.Scope = "base"
 	case "snsapi_userinfo":
-		scope = "userinfo"
+		params.Scope = "userinfo"
 	default:
-		writeError(w, http.StatusBadRequest, `scope must be "useinfo", "base", "sns_userinfo" or "sns_base"`)
+		c.Error(http.StatusBadRequest, `scope must be "useinfo", "base", "sns_userinfo" or "sns_base"`)
 		return
 	}
 
-	code := r.FormValue("code")
-	if code == "" {
-		writeError(w, http.StatusBadRequest, "code parameter expected")
-		return
-	}
-
-	wxUser := wxoauth2.NewWxUser(service)
-	openId, err := wxUser.GetOpenId(code)
+	wxUser := wxoauth2.NewWxUser(params.Service)
+	openId, err := wxUser.GetOpenId(params.Code)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+		c.Error(http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	var userInfo *wxauth.WxUserInfo
-	if scope == "base" {
+	if params.Scope == "base" {
 		userInfo, err = wxUser.GetInfoByAccessToken()
 	} else {
 		if err = wxUser.GetInfo(); err == nil {
@@ -50,7 +46,7 @@ func SnsAPI(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	writeJson(w, http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"code": http.StatusOK,
 		"msg": "OK",
 		"openId": openId,

@@ -2,6 +2,7 @@ package ce
 
 import (
 	"github.com/rosbit/go-wx-api/v2/tools"
+	"github.com/rosbit/mgin"
 	"net/http"
 )
 
@@ -21,7 +22,7 @@ import (
 //       "....": "..."
 //    }
 // }
-func SendTmplMsg(w http.ResponseWriter, r *http.Request) {
+func SendTmplMsg(c *mgin.Context) {
 	var params struct {
 		Service  string `json:"s"`
 		ToUserId string `json:"to"`
@@ -33,33 +34,33 @@ func SendTmplMsg(w http.ResponseWriter, r *http.Request) {
 		} `json:"mp"`
 		Data map[string]interface{} `json:"data"`
 	}
-	if status, err := readJson(r, &params); err != nil {
-		writeError(w, status, err.Error())
+	if status, err := c.ReadJSON(&params); err != nil {
+		c.Error(status, err.Error())
 		return
 	}
 	if params.Service == "" {
-		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+		c.Error(http.StatusBadRequest, "s(ervice) parameter expected")
 		return
 	}
 
 	if params.ToUserId == "" {
-		writeError(w, http.StatusBadRequest, "to(user id) parameter expected")
+		c.Error(http.StatusBadRequest, "to(user id) parameter expected")
 		return
 	}
 	if params.TmplId == "" {
-		writeError(w, http.StatusBadRequest, "tid(template id) parameter expected")
+		c.Error(http.StatusBadRequest, "tid(template id) parameter expected")
 		return
 	}
 	if len(params.Data) == 0 {
-		writeError(w, http.StatusBadRequest, "data parameter as a map expected")
+		c.Error(http.StatusBadRequest, "data parameter as a map expected")
 		return
 	}
 
 	res, err := wxtools.SendTemplateMessage(params.Service, params.ToUserId, params.TmplId, params.Data, params.Url, params.MiniProg.AppId, params.MiniProg.PagePath)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+		c.Error(http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeJson(w, http.StatusOK, res)
+	c.JSON(http.StatusOK, res)
 }
 

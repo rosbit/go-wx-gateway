@@ -2,30 +2,28 @@ package ce
 
 import (
 	"github.com/rosbit/go-wx-api/v2/tools"
+	"github.com/rosbit/mgin"
 	"net/http"
 )
 
 // POST ${commonEndpoints.ShortUrl}
 // s=<service-name-in-conf>&u=<long-url>
-func CreateShorturl(w http.ResponseWriter, r *http.Request) {
-	service := r.FormValue("s")
-	if service == "" {
-		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+func CreateShorturl(c *mgin.Context) {
+	var params struct {
+		Service string `form:"s"`
+		LongUrl string `form:"u"`
+	}
+	if code, err := c.ReadParams(&params); err != nil {
+		c.Error(code, err.Error())
 		return
 	}
 
-	longUrl := r.FormValue("u")
-	if longUrl == "" {
-		writeError(w, http.StatusBadRequest, "u(rl) parameter expected")
-		return
-	}
-
-	shortUrl, err := wxtools.MakeShorturl(service, longUrl)
+	shortUrl, err := wxtools.MakeShorturl(params.Service, params.LongUrl)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+		c.Error(http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeJson(w, http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"code": http.StatusOK,
 		"msg": "OK",
 		"short-url": shortUrl,

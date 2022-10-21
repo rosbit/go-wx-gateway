@@ -2,58 +2,53 @@ package ce
 
 import (
 	"github.com/rosbit/go-wx-api/v2/tools"
-	"strconv"
+	"github.com/rosbit/mgin"
 	"net/http"
 )
 
 // GET ${commonEndpoints.WxQr}?s=<service-name-in-conf>&t=<type-name,temp|forever>[&sceneid=xx][&e=<expire-secs-for-type-temp>]
-func CreateWxQr(w http.ResponseWriter, r *http.Request) {
-	service := r.FormValue("s")
-	if service == "" {
-		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+func CreateWxQr(c *mgin.Context) {
+	var params struct {
+		Service string `query:"s"`
+		QrType  string `query:"t"`
+		SceneId string `query:"sceneid" optional:"true"`
+		ExpireSecs int `query:"e" optional:"true"`
+	}
+	if code, err := c.ReadParams(&params); err != nil {
+		c.Error(code, err.Error())
 		return
 	}
 
-	qrType := r.FormValue("t")
-	if qrType == "" {
-		writeError(w, http.StatusBadRequest, "t(type) parameter expected")
-		return
-	}
-	switch qrType {
+	switch params.QrType {
 	case "temp", "forever":
 	default:
-		writeError(w, http.StatusBadRequest, `t(ype) value must be "temp" or "forever"`)
+		c.Error(http.StatusBadRequest, `t(ype) value must be "temp" or "forever"`)
 		return
 	}
 
-	sceneid := r.FormValue("sceneid")
-	if sceneid == "" {
-		sceneid = "0"
+	if params.SceneId == "" {
+		params.SceneId = "0"
 	}
 
 	var ticketURL2ShowQrCode, urlIncluedInQrcode string
 	var err error
-	switch qrType {
+	switch params.QrType {
 	case "temp":
 		expireSecs := 30
-		e := r.FormValue("e")
-		if e == "" {
-			expireSecs, _ := strconv.Atoi(e)
-			if expireSecs <= 0 {
-				expireSecs = 30
-			}
+		if params.ExpireSecs > 0 {
+			expireSecs = params.ExpireSecs
 		}
-		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateTempQrStrScene(service, sceneid, expireSecs)
+		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateTempQrStrScene(params.Service, params.SceneId, expireSecs)
 	case "forever":
-		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateQrStrScene(service, sceneid)
+		ticketURL2ShowQrCode, urlIncluedInQrcode, err = wxtools.CreateQrStrScene(params.Service, params.SceneId)
 	}
 
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+		c.Error(http.StatusInternalServerError, err.Error())
 		return
 	}
 
-	writeJson(w, http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"code": http.StatusOK,
 		"msg": "OK",
 		"result": map[string]string {

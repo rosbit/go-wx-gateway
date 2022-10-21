@@ -2,30 +2,28 @@ package ce
 
 import (
 	"github.com/rosbit/go-wx-api/v2/tools"
+	"github.com/rosbit/mgin"
 	"net/http"
 )
 
 // POST ${commonEndpoints.SignJSAPI}
 // s=<service-name-in-conf>&u=<url-calling-jsapi-in-urlencoding>
-func SignJSAPI(w http.ResponseWriter, r *http.Request) {
-	service := r.FormValue("s")
-	if service == "" {
-		writeError(w, http.StatusBadRequest, "s(ervice) parameter expected")
+func SignJSAPI(c *mgin.Context) {
+	var params struct {
+		Service string `form:"s"`
+		Url     string `form:"u"`
+	}
+	if code, err := c.ReadParams(&params); err != nil {
+		c.Error(code, err.Error())
 		return
 	}
 
-	url := r.FormValue("u")
-	if url == "" {
-		writeError(w, http.StatusBadRequest, "u(rl) parameter expected")
-		return
-	}
-
-	nonce, timestamp, signature, err := wxtools.SignJSAPI(service, url)
+	nonce, timestamp, signature, err := wxtools.SignJSAPI(params.Service, params.Url)
 	if err != nil {
-		writeError(w, http.StatusInternalServerError, err.Error())
+		c.Error(http.StatusInternalServerError, err.Error())
 		return
 	}
-	writeJson(w, http.StatusOK, map[string]interface{}{
+	c.JSON(http.StatusOK, map[string]interface{}{
 		"code": http.StatusOK,
 		"msg": "OK",
 		"params": map[string]interface{}{

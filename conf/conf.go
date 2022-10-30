@@ -10,6 +10,7 @@
       "listen-port": 7080,
       "services": [
          {
+			 "is-channels-ec": false,
              "name": "echo_server",
              "workerNum": 5,
              "timeout": 0,
@@ -63,6 +64,7 @@ type WxServiceConf struct {
 	ListenHost     string `json:"listen-host"`
 	ListenPort     int    `json:"listen-port"`
 	Services       []struct {
+		IsChannelsEc bool   `json:"is-channels-ec"`
 		Name         string `json:"name"`
 		WorkerNum    int    `json:"workerNum"`
 		Timeout      int    `json:"timeout"`

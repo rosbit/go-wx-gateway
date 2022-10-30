@@ -46,14 +46,25 @@ func StartWxGateway() error {
 		// set echo handler
 		api.Get(endpoints.ServicePath,  wxapi.CreateEcho(paramConf.Token))
 
-		// set msg handlers
-		var msgHandler wxmsg.WxMsgHandler
-		if len(service.MsgProxyPass) > 0 {
-			msgHandler = gwhandlers.NewMsgHandler(service.Name, service.MsgProxyPass, serviceConf.DontAppendUserInfo)
+		if !service.IsChannelsEc {
+			// set msg handlers
+			var msgHandler wxmsg.WxMsgHandler
+			if len(service.MsgProxyPass) > 0 {
+				msgHandler = gwhandlers.NewMsgHandler(service.Name, service.MsgProxyPass, serviceConf.DontAppendUserInfo)
+			} else {
+				msgHandler = wxmsg.MsgHandler
+			}
+			api.Post(endpoints.ServicePath, wxapi.CreateMsgHandler(service.Name, service.WorkerNum, msgHandler))
 		} else {
-			msgHandler = wxmsg.MsgHandler
+			// set channel ec handlers
+			var channelsEcHandler wxmsg.ChannelsEcEventHandler
+			if len(service.MsgProxyPass) > 0 {
+				channelsEcHandler = gwhandlers.NewChannelsEcHandler(service.Name, service.MsgProxyPass)
+			} else {
+				channelsEcHandler = wxmsg.CEEventHandler
+			}
+			api.Post(endpoints.ServicePath, wxapi.CreateChannelsEcHandler(service.Name, service.WorkerNum, channelsEcHandler))
 		}
-		api.Post(endpoints.ServicePath, wxapi.CreateMsgHandler(service.Name, service.WorkerNum, msgHandler))
 
 		// set oauth2 rediretor
 		if len(service.RedirectURL) > 0 {

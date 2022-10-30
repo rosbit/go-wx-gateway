@@ -20,10 +20,10 @@ func NewMsgHandler(service, proxyPass string, dontAppendUserInfo bool) *WxMsgHan
 }
 
 func (h *WxMsgHandler) jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.ReceivedMsg) wxmsg.ReplyMsg {
-	var res map[string]interface{}
+	var res Res
 	var err error
 	if h.dontAppendUserInfo {
-		res, err = JsonCall(url, "POST", receivedMsg)
+		err = JsonCall(url, "POST", receivedMsg, &res)
 	} else {
 		var ui *wxauth.WxUserInfo
 		ui, err = wxauth.GetUserInfo(h.service, fromUser)
@@ -41,38 +41,38 @@ func (h *WxMsgHandler) jsonCall(fromUser, toUser, url string, receivedMsg wxmsg.
 			return err.Error()
 		}())                   // b: {JSON,"userInfo":JSON\n,"userInfoError":"xxx"\n
 		b.WriteByte('}')       // b: {JSON,"userInfo":JSON\n,"userInfoError":"xxx"\n}
-		res, err = JsonCall(url, "POST", ioutil.NopCloser(b))
+		err = JsonCall(url, "POST", ioutil.NopCloser(b), &res)
 	}
 	if err != nil {
 		fmt.Printf("failed to JsonCall(%s): %v\n", url, err)
 		return nil
 	}
-	typ, ok := res["type"]
-	if ! ok {
+	typ := res.Type
+	if len(typ) == 0 {
 		typ = "text"
 	}
-	msg, ok := res["msg"];
-	if !ok {
-		fmt.Printf("no \"msg\" item in %v\n", res)
+	msg := res.Msg
+	if len(msg) == 0 {
+		fmt.Printf("no \"msg\" item in %#v\n", res)
 		return nil
 	}
 	switch typ {
 	case "text":
-		return wxmsg.NewReplyTextMsg(fromUser, toUser, msg.(string))
+		return wxmsg.NewReplyTextMsg(fromUser, toUser, msg)
 	case "image":
-		return wxmsg.NewReplyImageMsg(fromUser, toUser, msg.(string))
+		return wxmsg.NewReplyImageMsg(fromUser, toUser, msg)
 	case "voice":
-		return wxmsg.NewReplyVoiceMsg(fromUser, toUser, msg.(string))
+		return wxmsg.NewReplyVoiceMsg(fromUser, toUser, msg)
 	case "video":
-		title, ok := res["title"]
-		if !ok {
+		title := res.Title
+		if len(title) == 0 {
 			title = "[no title]"
 		}
-		desc, ok := res["desc"]
-		if !ok {
+		desc := res.Desc
+		if len(desc) == 0 {
 			desc = "[no desc]"
 		}
-		return wxmsg.NewReplyVideoMsg(fromUser, toUser, msg.(string), title.(string), desc.(string))
+		return wxmsg.NewReplyVideoMsg(fromUser, toUser, msg, title, desc)
 	case "success":
 		return wxmsg.NewSuccessMsg()
 	default:

@@ -63,7 +63,8 @@
              },
              {
                  "name": "如果有其它的公众号服务，可以参考上面的信息配置",
-                 "注意": "listen-endpoints中的路径 不能 相同"
+                 "注意": "listen-endpoints中的路径 不能 相同",
+                 "视频号小店支持": "如果是视频号小店，加上 \"is-channels-ec\": true 配置项，其中的 \"msg-proxy-pass\" 配置的是接收视频号小店推送的事件"
              }
           ],
           "token-cache-dir": "缓存access的根路径，这是可选的配置",
@@ -137,7 +138,7 @@
                  ```
               - "type"可以是"voice"、"video"、"image"等，"msg"则是它们对应的"mediaId"
      - `event`消息请求/响应举例，名称`subscribe`
-         - 请求消息体: 
+         - 请求消息体:
 
               ```json
               {
@@ -173,6 +174,26 @@
                  }
                  ```
               - "type"可以是"voice"、"video"、"image"等，"msg"则是它们对应的"mediaId"
+     - 视频号小店 `event`消息请求/响应举例，名称`channels_ec_order_pay`
+         - 请求消息体: 
+
+              ```json
+              {
+                  "ToUserName": "视频号小店的id",
+                  "FromUserName": "在视频号小店购物的用户的openId",
+                  "CreateTime": 1556088649,
+                  "MsgType": "event",
+                  "Event": "channels_ec_order_pay",
+                  "order_info": {
+                      "order_id": "3705115058471208928",
+                      "pay_time": 1658509200
+                  }
+              }
+              ```
+
+         - 响应
+              - 随意
+
  3. 与`redirect-url`的通讯
      - 处理网页授权请求。公众号的相关配置请参考微信文档。回调URL只需`wx-gateway`所在的域名
      - `redirect-url`配置的是一个URL，比如

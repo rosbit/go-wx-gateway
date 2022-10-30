@@ -3,6 +3,7 @@
       "listen-port": 7080,
       "services": [
          {
+			 "is-channels-ec": false,
              "name": "echo_server",
              "workerNum": 5,
              "timeout": 0,

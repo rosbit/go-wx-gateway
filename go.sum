@@ -22,8 +22,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/rosbit/gnet v0.0.10 h1:zBFcCxtG3WDR9TPywsWb3Yb7WbP8YoQR2KatMuQSEk8=
 github.com/rosbit/gnet v0.0.10/go.mod h1:4p58JSylqipqD061GlEB7pSjeU6qJwhxHpzW832KMZI=
-github.com/rosbit/go-wx-api/v2 v2.1.0 h1:ur29FkmNaQdAU8ub844VDwwc2e6uXdr6CIcIEcGjBo4=
-github.com/rosbit/go-wx-api/v2 v2.1.0/go.mod h1:ID+cxBsQ0aaowjCr2I5JpzqXTxCeS09ZuJEj9HFIBb0=
+github.com/rosbit/go-wx-api/v2 v2.1.1 h1:dbBtZbCWFRO+50CSn2zNk+wcSft0lcV0Pb4oqvtZzUk=
+github.com/rosbit/go-wx-api/v2 v2.1.1/go.mod h1:ID+cxBsQ0aaowjCr2I5JpzqXTxCeS09ZuJEj9HFIBb0=
 github.com/rosbit/mgin v0.1.3 h1:Rf/f7XRMHopNxPrT/sZCJMNCi6iEDQv4hOaJnJvxvEo=
 github.com/rosbit/mgin v0.1.3/go.mod h1:UZEGsCHI4K/Ss1RTax5kTD6mOZbyxHgPJ7gEmxRCSYM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=

@@ -28,7 +28,7 @@ func StartWxGateway() error {
 
 	for _, service := range serviceConf.Services {
 		paramConf := &service.WxParams
-		if err := wxapi.SetWxParams(service.Name, paramConf.Token, paramConf.AppId, paramConf.AppSecret, paramConf.AesKey); err != nil {
+		if err := wxapi.SetWxParams(service.Name, paramConf.Token, paramConf.AppId, paramConf.AppSecret, paramConf.AesKey, service.IsChannelsEc); err != nil {
 			return err
 		}
 
@@ -98,6 +98,13 @@ func StartWxGateway() error {
 	}
 	if len(commonEndpoints.SignJSAPI) > 0  {
 		api.POST(commonEndpoints.SignJSAPI, ce.SignJSAPI)
+	}
+
+	if len(commonEndpoints.ChannelsEcOrderDetail) > 0 {
+		api.GET(commonEndpoints.ChannelsEcOrderDetail, ce.ChannelsEcOrderDetail)
+	}
+	if len(commonEndpoints.ChannelsEcRefundDetail) > 0 {
+		api.GET(commonEndpoints.ChannelsEcRefundDetail, ce.ChannelsEcRefundDetail)
 	}
 
 	listenParam := fmt.Sprintf("%s:%d", serviceConf.ListenHost, serviceConf.ListenPort)

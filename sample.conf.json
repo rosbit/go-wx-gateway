@@ -30,7 +30,9 @@
           "sns-auth2": "/sns-auth2",
           "short-url": "/short-url",
           "tmpl-msg": "/tmpl-msg",
-          "sign-jsapi": "/sign-jsapi"
+          "sign-jsapi": "/sign-jsapi",
+		  "channels-ec-order-detail": "/channles-ec-order-detail",
+		  "channels-ec-refund-detail": "/channels-ec-refund-detail"
       },
       "dont-append-userinfo": false
 }

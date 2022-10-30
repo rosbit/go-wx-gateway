@@ -37,7 +37,9 @@
           "sns-auth2": "/sns-auth2",
           "short-url": "/short-url",
           "tmpl-msg": "/tmpl-msg",
-          "sign-jsapi": "/sign-jsapi"
+          "sign-jsapi": "/sign-jsapi",
+		  "channels-ec-order-detail": "/channles-ec-order-detail",
+		  "channels-ec-refund-detail": "/channels-ec-refund-detail"
       },
       "dont-append-userinfo": true
    }
@@ -86,6 +88,8 @@ type WxServiceConf struct {
 		ShortUrl    string `json:"short-url"`
 		TmplMsg     string `json:"tmpl-msg"`
 		SignJSAPI   string `json:"sign-jsapi"`
+		ChannelsEcOrderDetail string `json:"channels-ec-order-detail"`
+		ChannelsEcRefundDetail string `json:"channels-ec-refund-detail"`
 	} `json:"common-endpoints"`
 	DontAppendUserInfo bool `json:"dont-append-userinfo"`
 }

@@ -30,7 +30,7 @@ func (h *ChannelsEcEventhandler) jsonCallEvent(fromUser, toUser, eventType strin
 }
 
 func (h *ChannelsEcEventhandler) HandleOrderCancelEvent(event *wxmsg.OrderCancelEvent) []byte {
-	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.MsgType, event)
+	return h.jsonCallEvent(event.FromUserName, event.ToUserName, event.Event, event)
 }
 
 func (h *ChannelsEcEventhandler) HandleOrderPayEvent(event *wxmsg.OrderPayEvent) []byte {

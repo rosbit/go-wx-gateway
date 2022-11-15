@@ -189,7 +189,7 @@
                   "MsgType": "event",
                   "Event": "channels_ec_order_pay",
                   "order_info": {
-                      "order_id": "3705115058471208928",
+                      "order_id": 3705115058471208928, // NOTE: 文档处是字符串，实际返回的整数
                       "pay_time": 1658509200
                   }
               }
